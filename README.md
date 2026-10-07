@@ -3,8 +3,8 @@
 A full-stack functional clone of Airbnb featuring property listings, booking workflows, user authentication, and a host management dashboard. Built as a comprehensive SDE Fullstack Assignment.
 
 ## 🚀 Live Demo
-- **Frontend (Vercel):** [Insert Frontend URL Here]
-- **Backend (Render):** [Insert Backend URL Here]
+- **Frontend (Vercel):** (https://airbnb-qys2.vercel.app/)
+- **Backend (Render):** https://airbnb-493d.onrender.com
 
 ## 🛠 Tech Stack
 - **Frontend:** Next.js (TypeScript), React, CSS Modules
