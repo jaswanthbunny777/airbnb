@@ -1,6 +1,14 @@
 /* eslint-disable */
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+// Warn in development if API_BASE is still localhost (reminder to set Vercel env var)
+if (typeof window !== 'undefined' && API_BASE.includes('localhost')) {
+  console.warn(
+    '[api.ts] NEXT_PUBLIC_API_URL is not set or points to localhost. ' +
+    'In production, set NEXT_PUBLIC_API_URL=https://<your-render-url> in Vercel environment variables.'
+  );
+}
+
 interface FetchOptions extends RequestInit {
   token?: string | null;
 }
@@ -24,6 +32,17 @@ async function fetchAPI<T>(endpoint: string, options: FetchOptions = {}): Promis
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: 'Network error' }));
+
+    // If the server rejected our token (401), clear the stale credentials so
+    // the user is prompted to log in rather than being silently broken.
+    if (response.status === 401) {
+      // Dynamically import to avoid circular deps; the callback is set by AuthProvider.
+      import('./auth-context').then(({ getLogoutCallback }) => {
+        const cb = getLogoutCallback();
+        if (cb) cb();
+      }).catch(() => {});
+    }
+
     throw new Error(error.detail || `HTTP ${response.status}`);
   }
 
