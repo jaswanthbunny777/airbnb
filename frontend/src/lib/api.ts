@@ -1,11 +1,10 @@
 /* eslint-disable */
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-// Warn in development if API_BASE is still localhost (reminder to set Vercel env var)
-if (typeof window !== 'undefined' && API_BASE.includes('localhost')) {
+// In production, warn if API_BASE is unexpectedly set to localhost
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production' && API_BASE.includes('localhost')) {
   console.warn(
-    '[api.ts] NEXT_PUBLIC_API_URL is not set or points to localhost. ' +
-    'In production, set NEXT_PUBLIC_API_URL=https://<your-render-url> in Vercel environment variables.'
+    '[api.ts] In production, NEXT_PUBLIC_API_URL should point to your deployed Render backend URL.'
   );
 }
 
