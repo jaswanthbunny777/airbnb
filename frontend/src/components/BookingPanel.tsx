@@ -48,13 +48,14 @@ export default function BookingPanel({ listing, bookedDates }: Props) {
   const formatDate = (d?: Date) => d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Add date';
 
   const handleBook = async () => {
-    if (!token) { showToast('Please log in to book', 'error'); return; }
+    const activeToken = token || (typeof window !== 'undefined' ? localStorage.getItem('airbnb_token') : null);
+    if (!activeToken) { showToast('Please log in to book', 'error'); return; }
     if (!range?.from || !range?.to) { showToast('Please select dates', 'error'); return; }
 
     setLoading(true);
     try {
       const toLocalStr = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-      const booking = await bookingsAPI.create(token, {
+      const booking = await bookingsAPI.create(activeToken, {
         listing_id: listing.id,
         check_in: toLocalStr(range.from),
         check_out: toLocalStr(range.to),

@@ -33,9 +33,9 @@ async function fetchAPI<T>(endpoint: string, options: FetchOptions = {}): Promis
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: 'Network error' }));
 
-    // If the server rejected our token (401), clear the stale credentials so
-    // the user is prompted to log in rather than being silently broken.
-    if (response.status === 401) {
+    // If the session check endpoint rejected our token (401), clear stale credentials.
+    // Do NOT wipe user credentials on transactional calls (like bookings) to avoid jarring logouts.
+    if (response.status === 401 && endpoint.startsWith('/api/auth/me')) {
       // Dynamically import to avoid circular deps; the callback is set by AuthProvider.
       import('./auth-context').then(({ getLogoutCallback }) => {
         const cb = getLogoutCallback();
